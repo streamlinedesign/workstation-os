@@ -1,0 +1,6 @@
+# When a sound card or USB audio interface appears, re-run the IRQ priority script
+# so its IRQ thread sits above the audio core. Installed to /etc/udev/rules.d/.
+ACTION=="add", SUBSYSTEM=="sound", KERNEL=="card*", RUN+="/usr/local/sbin/rtirq-prio.sh"
+
+# USB MIDI controllers: readable by the audio group, no desktop daemon needed.
+SUBSYSTEM=="sound", KERNEL=="midiC*D*", GROUP="audio", MODE="0660"

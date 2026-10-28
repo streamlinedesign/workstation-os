@@ -1,0 +1,10 @@
+[Unit]
+Description=Synthesizer workstation (instrument mode)
+Documentation=https://github.com/streamlinedesign/workstation-os
+Requires=multi-user.target
+After=multi-user.target
+Conflicts=graphical.target rescue.target
+AllowIsolate=yes
+
+[Install]
+Alias=default.target

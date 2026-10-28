@@ -1,0 +1,9 @@
+#!/bin/sh
+# Adds a "PC mode" GRUB entry that boots the same kernel and root into the normal
+# desktop (graphical.target) instead of the instrument. Installed to /etc/grub.d/.
+exec tail -n +4 "$0"
+menuentry 'Workstation: PC mode (desktop)' --class debian --class gnu-linux {
+    search --no-floppy --fs-uuid --set=root WSOS_ROOT_UUID
+    linux /vmlinuz root=UUID=WSOS_ROOT_UUID ro quiet systemd.unit=graphical.target
+    initrd /initrd.img
+}

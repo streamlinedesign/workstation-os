@@ -1,0 +1,40 @@
+[Unit]
+Description=Workstation audio core
+Documentation=https://github.com/streamlinedesign/workstation-core
+After=sound.target systemd-udev-settle.service rtirq-prio.service
+Wants=sound.target rtirq-prio.service
+PartOf=instrument.target
+
+[Service]
+Type=simple
+User=workstation
+Group=audio
+SupplementaryGroups=input
+EnvironmentFile=/etc/workstation/core.conf
+# Stage 1: the proof binary. Stage 2 replaces it with the real daemon.
+ExecStart=/usr/local/bin/wsc-play --device ${WSC_DEVICE} --midi ${WSC_MIDI} --rate ${WSC_RATE} \
+  --period ${WSC_PERIOD} --periods ${WSC_PERIODS} --channels ${WSC_CHANNELS} \
+  --cpu ${WSC_CPU} --priority ${WSC_PRIORITY}
+Restart=always
+RestartSec=1
+
+# Real-time permissions for the service itself (limits.conf does not apply to units).
+LimitRTPRIO=95
+LimitMEMLOCK=infinity
+LimitNICE=-19
+# Keep the service's housekeeping off the DSP cores; the audio thread pins itself.
+CPUAffinity=0 1
+IOSchedulingClass=best-effort
+IOSchedulingPriority=0
+OOMScoreAdjust=-900
+
+# Hardening that costs nothing on the audio path.
+NoNewPrivileges=yes
+ProtectSystem=strict
+ProtectHome=read-only
+ReadWritePaths=/var/lib/workstation
+StateDirectory=workstation
+PrivateTmp=yes
+
+[Install]
+WantedBy=instrument.target

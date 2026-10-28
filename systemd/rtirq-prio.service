@@ -1,0 +1,12 @@
+[Unit]
+Description=Raise audio IRQ thread priorities
+After=sound.target
+Wants=sound.target
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/sbin/rtirq-prio.sh
+RemainAfterExit=yes
+
+[Install]
+WantedBy=instrument.target
